@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="sw" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Butiama Market - Soko Kuu la Kimataifa la Butiama</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        international: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .element {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .text-international-glow {
+            background: linear-gradient(135deg, #facc15 0%, #fef08a 70%, rgba(250, 204, 21, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .international-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 253, 244, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(187, 247, 208, 0.8);
+            box-shadow: 0 12px 35px -5px rgba(22, 163, 74, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            transition: all 0.35s ease;
+        }
+        .international-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 40px -10px rgba(34, 197, 94, 0.18);
+            border-color: #86efac;
+        }
+        .hero-slide {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            position: absolute;
+            inset: 0;
+            background-color: #0f172a;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: right center;
+            pointer-events: none;
+        }
+        .hero-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        @media (max-width: 767px) {
+            .hero-slide {
+                background-position: center center;
+            }
+        }
+        @media (max-width: 399px) {
+            .product-contact-actions.product-contact-actions {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        .hero-content-slide {
+            grid-area: 1 / 1;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
+        }
+        .hero-content-slide.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .hero-heading {
+            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-slide,
+            .hero-content-slide {
+                transition: none;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
+                
+                <!-- Logo ya Soko Kuu -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="#" onclick="showMainPage(); return false;" class="flex items-center gap-2.5 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-store text-lg"></i>
+                        </div>
+                        <div class="hidden sm:block">
+                            <span class="text-xl font-extrabold tracking-tight text-slate-900 block leading-tight">BUTIAMA<span class="text-brand-600">.MARKET</span></span>
+                            <span class="text-[10px] font-semibold text-slate-500 block -mt-0.5 tracking-widest uppercase">Global Marketplace</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Search Input Bar -->
+                <div class="flex-1 max-w-2xl flex items-center gap-2">
+                    <div class="relative flex-1 flex items-center bg-slate-100 rounded-xl border border-transparent focus-within:border-brand-500 focus-within:bg-white transition-all">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm pl-3"></i>
+                        <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Tafuta vifaa vya jikoni, vyumba, pikipiki, migahawa, viwanja..." class="w-full bg-transparent py-2.5 pl-2 pr-4 text-xs sm:text-sm text-slate-800 focus:outline-none placeholder:text-slate-400">
+                    </div>
+                </div>
+
+                <!-- Header Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <button onclick="showAboutPage()" class="hidden md:flex items-center gap-1.5 text-slate-700 hover:text-brand-600 bg-slate-100 hover:bg-slate-200 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                        <i class="fa-solid fa-circle-info text-brand-600"></i>
+                        <span>Kuhusu Sisi</span>
+                    </button>
+
+                    <button onclick="toggleSavedModal()" class="relative p-2.5 text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-xl transition-colors">
+                        <i class="fa-regular fa-heart text-lg sm:text-xl"></i>
+                        <span id="savedCountBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                    </button>
+
+                    <div id="userAccountSection"></div>
+
+                    <button onclick="handlePostAdClick()" class="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white px-3 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-brand-500/20 hover:shadow-lg transition-all transform active:scale-95">
+                        <i class="fa-solid fa-circle-plus text-amber-300"></i>
+                        <span class="hidden sm:inline">Weka Tangazo</span>
+                        <span class="sm:hidden">Tangazo</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAGE CONTAINER -->
+    <div id="pageContainer" class="flex-1 flex flex-col">
+        
+        <!-- MAIN MARKETPLACE VIEW -->
+        <div id="mainMarketView" class="flex-1 flex flex-col">
+            <!-- HERO SECTION -->
+            <section class="bg-slate-950 py-6 sm:py-12 border-b border-slate-800 relative z-30 overflow-hidden min-h-[260px] sm:min-h-[360px] flex items-center">
+            <div id="heroBackgrounds" aria-hidden="true"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/50 via-slate-950/15 to-slate-950/5 pointer-events-none"></div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div id="heroSlides" class="relative grid items-center w-full"></div>
+                </div>
+            </section>
+
+            <!-- COUNTERS -->
+            <section class="bg-gradient-to-b from-slate-900 to-slate-800 py-6 border-b border-slate-700 text-white">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center mb-3">Takwimu Rasmi za Mtaani Soko Kuu Butiama</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 backdrop-blur-md p-5 rounded-2xl border border-white/10 text-center space-y-1 shadow-inner">
+                            <i class="fa-solid fa-users text-amber-400 text-xl mb-1"></i>
+                            <span class="block text-3xl sm:text-4xl font-black text-white" id="countUsers">0</span>
+                            <span class="text-xs text-slate-300 font-semibold">Wateja na Wanunuzi</span>
+                        </div>
+                        <div class="bg-white/5 backdrop-blur-md p-5 rounded-2xl border border-white/10 text-center space-y-1 shadow-inner">
+                            <i class="fa-solid fa-boxes-packing text-brand-400 text-xl mb-1"></i>
+                            <span class="block text-3xl sm:text-4xl font-black text-white" id="countAds">0</span>
+                            <span class="text-xs text-slate-300 font-semibold">Biashara Zilizopostiwa</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row gap-6">
+                
+                <!-- SIDEBAR -->
+                <aside class="w-full md:w-64 shrink-0 space-y-6">
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+                            <span>Aina za Bidhaa</span>
+                            <i class="fa-solid fa-sliders text-slate-400"></i>
+                        </h2>
+                        <div class="space-y-1.5" id="categoryList"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Hali ya Bidhaa (Condition)</h2>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer hover:text-brand-600 font-medium">
+                                <input type="radio" name="conditionFilter" value="ALL" checked onchange="filterProducts()" class="text-brand-600 focus:ring-brand-500">
+                                <span>Zote (Mpya & Zilizotumika)</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer hover:text-brand-600 font-medium">
+                                <input type="radio" name="conditionFilter" value="Mpya" onchange="filterProducts()" class="text-brand-600 focus:ring-brand-500">
+                                <span>Mpya / Uzima Mzuri</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer hover:text-brand-600 font-medium">
+                                <input type="radio" name="conditionFilter" value="Imetumika" onchange="filterProducts()" class="text-brand-600 focus:ring-brand-500">
+                                <span>Imetumika (Used)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div role="note" class="bg-amber-50 border border-amber-200 border-l-4 border-l-amber-500 rounded-2xl p-4 flex items-start gap-3 text-amber-950 shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5" aria-hidden="true"></i>
+                        <div>
+                            <h2 class="font-extrabold text-sm">Tahadhari ya malipo</h2>
+                            <p class="text-xs leading-relaxed mt-1">Usilipe kabla hujakutana na muuzaji na kukagua bidhaa, au kabla mzigo haujafika na kuukagua. Usitume fedha mapema kwa mtu ambaye hujamthibitisha.</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- PRODUCTS GRID SECTION -->
+                <section class="flex-1 min-w-0 space-y-8">
+                    <div class="md:hidden flex items-center gap-2 overflow-x-auto pb-3 custom-scrollbar -mx-4 px-4" id="mobileCategoryPills"></div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900" id="currentCategoryTitle">Vyote (Matangazo Yote)</h2>
+                            <p class="text-xs text-slate-500 mt-0.5" id="resultsCount">Inaonyesha bidhaa 0</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 self-end sm:self-auto">
+                            <label for="sortSelect" class="text-xs font-semibold text-slate-500">Panga kwa:</label>
+                            <select id="sortSelect" onchange="filterProducts()" class="bg-slate-100 text-xs font-semibold text-slate-700 rounded-lg px-2.5 py-1.5 border border-transparent focus:border-brand-500 focus:bg-white focus:outline-none">
+                                <option value="newest">Iliyowekwa Punde (Newest)</option>
+                                <option value="price-low">Bei: Chini kwenda Juu</option>
+                                <option value="price-high">Bei: Juu kwenda Chini</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+
+                    <div id="emptyState" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-4 my-6">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400 text-2xl">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Hakuna tangazo lililopatikana</h3>
+                            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Jaribu kubadilisha jina au kuchagua kategoria nyingine.</p>
+                        </div>
+                        <button onclick="resetFilters()" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+                            <i class="fa-solid fa-rotate-left"></i> Ondoa Filters
+                        </button>
+                    </div>
+
+                    <!-- TESTIMONIAL CARDS -->
+                    <div class="bg-gradient-to-tr from-brand-50/60 via-white to-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+                        <div class="text-center space-y-1.5 max-w-lg mx-auto">
+                            <span class="bg-brand-100 text-brand-800 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Global Testimonials</span>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-900">Ushuhuda wa Wafanyabiashara Soko Kuu Butiama</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="international-card p-5 rounded-2xl space-y-3">
+                                <div class="flex items-center text-amber-500 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-slate-700 italic leading-relaxed">"Nilipost pikipiki yangu hapa na nikapata mteja siku hiyohiyo. Mفumo ni wa kisasa!"</p>
+                                <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold">M</div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-900">Mama Anna</h4>
+                                        <p class="text-[10px] text-slate-500">Mchuuzi, Soko Kuu</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="international-card p-5 rounded-2xl space-y-3">
+                                <div class="flex items-center text-amber-500 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-slate-700 italic leading-relaxed">"Kuweka vyumba vya kupanga na viwanja Kiabakari kumerahisishwa mno. Wateja wanapiga simu moja kwa moja."</p>
+                                <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">J</div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-900">Joseph Mwita</h4>
+                                        <p class="text-[10px] text-slate-500">Mfanyabiashara, Kiabakari</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="international-card p-5 rounded-2xl space-y-3">
+                                <div class="flex items-center text-amber-500 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs text-slate-700 italic leading-relaxed">"Site nzuri yenye muonekano safi. Inasaidia sana biashara zetu za electronics na stationery."</p>
+                                <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-bold">A</div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-900">Abel Mtani</h4>
+                                        <p class="text-[10px] text-slate-500">Owner, Abel Stationeries</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ABOUT PAGE VIEW -->
+        <div id="aboutPageView" class="hidden flex-1 bg-gradient-to-br from-slate-900 via-slate-950 to-brand-950 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto space-y-8">
+                <div>
+                    <button onclick="showMainPage()" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i> Rudi Soko Kuu
+                    </button>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl flex flex-col md:flex-row items-center gap-8 sm:gap-10">
+                    <img src="data:image/jpeg;base64,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" alt="Picha ya Daniel Wambura, mwanzilishi wa Butiama Market" class="w-40 h-40 sm:w-52 sm:h-52 object-cover rounded-3xl shadow-xl border-4 border-brand-500 shrink-0">
+                    <div class="space-y-3 text-center md:text-left">
+                        <span class="bg-brand-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Visionary & Lead Developer</span>
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Daniel Wambura</h1>
+                        <p class="text-xs text-brand-300 font-bold">Global Software Architect & Founder of Butiama Market</p>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">
+                            "Butiama Market imeundwa kwa lengo la kuleta mapinduzi ya kidijitali katika Wilaya ya Butiama. Tunatoa jukwaa salama, la kuaminika, na lenye kasi kwa wafanyabiashara wote."
+                        </p>
+                        <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs">
+                            <span class="bg-white/10 px-3 py-1.5 rounded-xl font-mono text-amber-300"><i class="fa-solid fa-phone mr-1.5"></i> 0796906117</span>
+                            <span class="bg-white/10 px-3 py-1.5 rounded-xl text-slate-300"><i class="fa-solid fa-location-dot mr-1.5 text-brand-400"></i> Butiama, Mara - Tanzania</span>
+                        </div>
+                    </div>
+                </div>
+
+                <script>/*
+                    document.querySelector('#aboutPageView img[alt*=Daniel]').src = 'data:image/jpeg;base64,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" alt="Picha ya Daniel Wambura, mwanzilishi wa Butiama Market" class="w-40 h-40 sm:w-52 sm:h-52 object-cover rounded-3xl shadow-xl border-4 border-brand-500 shrink-0">
+                */</script>
+                <div class="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                <script>
+                    const founderImage = document.querySelector('#aboutPageView img[alt*=Daniel]');
+                    const founderImageData = Array.from(document.scripts)
+                        .map(script => script.textContent.match(/data:image\/jpeg;base64,[A-Za-z0-9+/=]+/))
+                        .find(Boolean);
+                    if (!founderImage || !founderImageData) {
+                        throw new Error('Unable to load the founder image.');
+                    }
+                    founderImage.src = founderImageData[0];
+                </script>
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=85" alt="Vitabu na vifaa vya shule vinavyopatikana Butiama Market" class="w-full h-64 sm:h-80 md:h-full min-h-64 object-cover">
+                    <div class="p-8 sm:p-12 flex flex-col justify-center">
+                        <span class="text-brand-300 text-xs font-extrabold uppercase tracking-wider">Soko letu</span>
+                        <h2 class="mt-3 text-2xl sm:text-3xl font-black text-white">Fursa kwa kila biashara</h2>
+                        <p class="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
+                            Butiama Market inaunganisha wanunuzi na wafanyabiashara wa bidhaa na huduma mbalimbali, zikiwemo vitabu na vifaa vya shule.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button onclick="showMainPage()" class="bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold px-8 py-3 rounded-2xl text-xs shadow-lg transition-all">
+                        <i class="fa-solid fa-store mr-2"></i> Rudi Soko Kuu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCT DETAIL PAGE VIEW -->
+        <div id="productDetailPage" class="hidden flex-1 bg-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div>
+                    <button onclick="showMainPage()" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i> Rudi Kwenye Orodha
+                    </button>
+                </div>
+
+                <div id="productDetailContainer" class="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="mainFooter" class="bg-slate-950 text-slate-300 border-t border-slate-800/80 mt-16 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-slate-800">
+                <div class="bg-slate-900/60 p-6 rounded-3xl border border-slate-800 space-y-3 shadow-sm">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+                        <span class="text-lg font-black tracking-tight text-white">BUTIAMA<span class="text-brand-500">.MARKET</span></span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed font-medium">
+                        Soko Kuu la Butiama ni jukwaa la kimataifa la kidijitali linalounganisha jamii, wajasiriamali na wafanyabiashara wa Wilaya ya Butiama.
+                    </p>
+                    <button onclick="showAboutPage()" class="text-xs font-bold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1.5 pt-1">
+                        <i class="fa-solid fa-arrow-right"></i> Soma zaidi kuhusu sisi na picha
+                    </button>
+                </div>
+
+                <div class="bg-slate-900/60 p-6 rounded-3xl border border-slate-800 space-y-3 shadow-sm">
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-brand-400"></i> Vitengo Vikuu (Categories)
+                    </h4>
+                    <ul class="grid grid-cols-2 gap-2 text-xs text-slate-400 font-medium pt-1">
+                        <li><a href="#" onclick="filterByCategory('Vifaa vya Jikoni')" class="hover:text-brand-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px]"></i> Jikoni</a></li>
+                        <li><a href="#" onclick="filterByCategory('Vyumba vya Kupanga')" class="hover:text-brand-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px]"></i> Vyumba</a></li>
+                        <li><a href="#" onclick="filterByCategory('Magari na Pikipiki')" class="hover:text-brand-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px]"></i> Magari & Pikipiki</a></li>
+                        <li><a href="#" onclick="filterByCategory('Migahawa na Hotels')" class="hover:text-brand-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px]"></i> Migahawa</a></li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-900 to-slate-900/90 p-6 rounded-3xl border border-amber-500/30 space-y-3 shadow-lg">
+                    <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-code text-amber-400"></i> Mtengenezaji wa Mfumo
+                    </h4>
+                    <div class="space-y-0.5">
+                        <p class="font-extrabold text-white text-sm">Daniel Wambura</p>
+                        <p class="text-[11px] text-slate-400">Global Software Architect & Developer</p>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 pt-1 border-t border-slate-800">
+                        <p class="flex items-center gap-2.5 font-bold text-white"><i class="fa-solid fa-phone text-brand-400"></i> 0796906117</p>
+                        <p class="flex items-center gap-2.5"><i class="fa-solid fa-envelope text-brand-400"></i> contacts@butiama.market</p>
+                        <p class="flex items-center gap-2.5"><i class="fa-solid fa-location-dot text-brand-400"></i> Butiama, Mara - Tanzania</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+                <p>© 2026 Butiama.Market Global Inc. Haki zote zimehifadhiwa.</p>
+                <p class="font-medium">Designed & Built by <span class="text-amber-400 font-bold">Daniel Wambura (0796906117)</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="savedModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden my-auto relative transform transition-all p-6 space-y-4 border border-slate-200">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-heart text-red-500"></i> Matangazo Uliyohifadhi
+                </h3>
+                <button onclick="toggleSavedModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="savedItemsContainer" class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden my-auto relative transform transition-all p-6 text-center space-y-4 border border-slate-200">
+            <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="w-14 h-14 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold"><i class="fa-solid fa-user-plus"></i></div>
+            <div>
+                <h3 class="text-lg font-bold text-slate-900">Jisajili / Ingia Kwanza</h3>
+                <p class="text-xs text-slate-500 mt-1">Ili uweze kuweka tangazo lako Soko Kuu Butiama, tafadhali jisajili.</p>
+            </div>
+            <form onsubmit="handleUserRegistration(event)" class="space-y-3 text-left pt-2">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Jina Lako / Biashara *</label>
+                    <input type="text" id="regName" required placeholder="Mf. Joseph Mwita" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Namba ya Simu / WhatsApp *</label>
+                    <input type="tel" id="regPhone" required placeholder="0796906117" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Location Unayopatikania *</label>
+                    <input type="text" id="regLocation" required placeholder="Soko Kuu Butiama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold py-3 rounded-xl text-xs shadow-md">Jisajili & Endelea</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="postAdModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden my-auto relative transform transition-all border border-slate-200">
+            <div class="bg-slate-900 px-6 py-4 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold"><i class="fa-solid fa-plus"></i></div>
+                    <div>
+                        <h3 class="font-bold text-sm">Weka Tangazo Jipya (Soko Kuu Butiama)</h3>
+                    </div>
+                </div>
+                <button onclick="closePostAdModal()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="postAdForm" onsubmit="handlePostAd(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Kichwa cha Tangazo (Title) *</label>
+                    <input type="text" id="adTitle" required placeholder="Mf. Pikipiki, Vyumba, Jiko..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Kategoria *</label>
+                        <select id="adCategory" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                            <option value="Vifaa vya Jikoni">Vifaa vya Jikoni</option>
+                            <option value="Vifaa vya Nyumbani">Vifaa vya Nyumbani</option>
+                            <option value="Stationeries & Vifaa vya Ofisini">Stationeries & Ofisini</option>
+                            <option value="Viwanja na Nyumba">Viwanja na Nyumba</option>
+                            <option value="Vyumba vya Kupanga">Vyumba vya Kupanga</option>
+                            <option value="Mifugo (Livestock)">Mifugo (Livestock)</option>
+                            <option value="Magari na Pikipiki">Magari na Pikipiki</option>
+                            <option value="Bidhaa za Dukani">Bidhaa za Dukani</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Migahawa na Hotels">Migahawa na Hotels</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Hali *</label>
+                        <select id="adCondition" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                            <option value="Mpya">Mpya (Brand New)</option>
+                            <option value="Imetumika">Imetumika (Used)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Bei (TSh) *</label>
+                        <input type="number" id="adPrice" required placeholder="75000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Simu / WhatsApp *</label>
+                        <input type="tel" id="adPhone" required placeholder="0796906117" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Location *</label>
+                    <input type="text" id="adLocationInput" required placeholder="Soko Kuu Butiama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Kiungo cha Bidhaa / Tovuti (Hiari)</label>
+                    <input type="url" id="adExternalUrl" placeholder="https://mfano.com/bidhaa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Weka Picha (Chagua au Badili kabla ya kutuma)</label>
+                    <input id="adImageInput" type="file" accept="image/*" onchange="previewSelectedImage(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700">
+                </div>
+                <div id="imagePreviewContainer" class="hidden">
+                    <img id="imagePreview" class="w-full h-32 object-cover rounded-xl border border-slate-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Maelezo Kamili *</label>
+                    <textarea id="adDescription" required rows="3" placeholder="Eleza bidhaa yako..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500 focus:bg-white focus:outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold py-3 rounded-xl text-xs shadow-md">Chapisha Tangazo Lako Sasa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const CATEGORIES = [
+            { id: 'ALL', name: 'Vyote (Matangazo Yote)', icon: 'fa-globe', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Vifaa vya Jikoni', name: 'Vifaa vya Jikoni', icon: 'fa-utensils', image: 'https://images.unsplash.com/photo-1527016021513-b09758b777cd?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Vifaa vya Nyumbani', name: 'Vifaa vya Nyumbani', icon: 'fa-house', image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Stationeries & Vifaa vya Ofisini', name: 'Stationeries & Ofisini', icon: 'fa-book-open', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Viwanja na Nyumba', name: 'Viwanja na Nyumba', icon: 'fa-map-location-dot', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Vyumba vya Kupanga', name: 'Vyumba vya Kupanga', icon: 'fa-door-open', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Mifugo (Livestock)', name: 'Mifugo (Livestock)', icon: 'fa-cow', image: 'https://images.unsplash.com/photo-1546445317-29f4545f9d52?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Magari na Pikipiki', name: 'Magari na Pikipiki', icon: 'fa-motorcycle', image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Bidhaa za Dukani', name: 'Bidhaa za Dukani', icon: 'fa-basket-shopping', image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Furniture', name: 'Furniture', icon: 'fa-couch', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Electronics', name: 'Electronics', icon: 'fa-laptop', image: 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=200&q=80' },
+            { id: 'Migahawa na Hotels', name: 'Migahawa na Hotels', icon: 'fa-utensils', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80' }
+        ];
+
+        const HERO_HEADLINES = {
+            ALL: 'Nunua, uza na tangaza bidhaa na huduma zote za Butiama.',
+            'Vifaa vya Jikoni': 'Vifaa vya jikoni vya ubora kwa matumizi ya nyumbani na biashara.',
+            'Vifaa vya Nyumbani': 'Pata vifaa vinavyorahisisha maisha yako ya kila siku.',
+            'Stationeries & Vifaa vya Ofisini': 'Vifaa vya shule na ofisi vinapatikana hapa.',
+            'Viwanja na Nyumba': 'Tafuta viwanja na nyumba zinazokufaa.',
+            'Vyumba vya Kupanga': 'Pata chumba cha kupanga kinachokufaa Butiama.',
+            'Mifugo (Livestock)': 'Nunua na uza mifugo katika soko la Butiama.',
+            'Magari na Pikipiki': 'Gundua magari na pikipiki kwa matumizi na biashara.',
+            'Bidhaa za Dukani': 'Mahitaji ya dukani yanapatikana kwa urahisi.',
+            Furniture: 'Samani za nyumbani na ofisini kwa kila nafasi.',
+            Electronics: 'Gundua vifaa vya kielektroniki kwa matumizi na kazi.',
+            'Migahawa na Hotels': 'Gundua migahawa, hoteli na huduma za chakula.'
+        };
+        const HERO_IMAGE_OVERRIDES = {
+            'Vifaa vya Jikoni': 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1920&q=85',
+            'Vifaa vya Nyumbani': 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=1920&q=85',
+            'Mifugo (Livestock)': 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1920&q=85',
+            'Stationeries & Vifaa vya Ofisini': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1920&q=85'
+        };
+
+        let currentUser = null; 
+        let savedItems = [];
+        let activeCategory = 'ALL';
+        let uploadedImageBase64 = null; 
+        let currentSlide = 1;
+        let productImageZoom = 1;
+
+        let products = [
+            { id: 1, title: 'Jiko la Gesi la Banner Mbili na Mtungi kg 15 Full Set', category: 'Vifaa vya Jikoni', price: 185000, location: 'Soko Kuu Butiama', condition: 'Mpya', seller: 'pocanny', phone: '0796906117', image: 'https://images.unsplash.com/photo-1527016021513-b09758b777cd?auto=format&fit=crop&w=800&q=80', description: 'Seti kamili ya Jiko la Gesi lenye banner 2 za chuma, hose pipe, regulator ya kisasa na mtungi mpya wa kg 15.', date: 'Leo' },
+            { id: 2, title: 'Vyumba 2 vya Kupanga vya Kisasa (Self-Contained)', category: 'Vyumba vya Kupanga', price: 120000, location: 'Bumangi', condition: 'Mpya', seller: 'pocanny', phone: '0796906117', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', description: 'Vyumba vizuri vya kupanga vyenye tiles, gypsum, maji ndani na umeme wa luku binafsi.', date: 'Leo' },
+            { id: 3, title: 'Pikipiki ya Boxer BM 150 (Model Mpya)', category: 'Magari na Pikipiki', price: 2800000, location: 'Kiabakari Stand', condition: 'Mpya', seller: 'Butiama Motors', phone: '0796906117', image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80', description: 'Pikipiki imara kwa ajili ya biashara ya usafirishaji, ina documenti zote kamili.', date: 'Jana' },
+            { id: 4, title: 'Chakula cha Asili na Vinywaji Baridi', category: 'Migahawa na Hotels', price: 5000, location: 'Soko Kuu Butiama', condition: 'Mpya', seller: 'Mama Ntilie Deluxe', phone: '0796906117', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80', description: 'Tunatoa chakula safi na kitamu kila siku kwa bei nafuu kabisa.', date: 'Leo' },
+            { id: 5, title: 'Seti ya Sofa za Kisasa (3 Seater + 2 Seater)', category: 'Furniture', price: 650000, location: 'Busegwe Center', condition: 'Mpya', seller: 'Mara Furniture Hub', phone: '0796906117', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80', description: 'Sofa nzuri zenye kitambaa cha velvet na sponge ngumu zisizochakaa haraka.', date: 'Leo' },
+            { id: 6, title: 'Laptop ya HP Core i5 (8GB RAM, 256GB SSD)', category: 'Electronics', price: 420000, location: 'Butiama Mjini', condition: 'Imetumika', seller: 'Daniel Wambura Tech', phone: '0796906117', image: 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=800&q=80', description: 'Laptop safi sana kwa ajili ya kazi za ofisi, masomo na programming.', date: 'Jana' },
+            { id: 7, title: 'Kiwanja kilichopimwa Sqm 1000', category: 'Viwanja na Nyumba', price: 3500000, location: 'Sirori Simba', condition: 'Mpya', seller: 'Wambura Properties', phone: '0796906117', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80', description: 'Kiwanja kizuri karibu na barabara kuu, kinafaa kwa ujenzi wa makazi au biashara.', date: 'Leo' },
+            { id: 8, title: 'Ng\'ombe wa Maziwa (Friesian Cross)', category: 'Mifugo (Livestock)', price: 1400000, location: 'Kukirango', condition: 'Mpya', seller: 'Mfugaji Makini', phone: '0796906117', image: 'https://images.unsplash.com/photo-1546445317-29f4545f9d52?auto=format&fit=crop&w=800&q=80', description: 'Ng\'ombe mwenye afya bora, hutoa lita 15 za maziwa kwa siku.', date: 'Jana' },
+            { id: 9, title: 'Box la Karatasi za A4 Rim 5 (Double A)', category: 'Stationeries & Vifaa vya Ofisini', price: 75000, location: 'Soko Kuu Butiama', condition: 'Mpya', seller: 'Abel Stationeries', phone: '0796906117', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=85', description: 'Karatasi safi kwa ajili ya printing na photocopy zenye ubora wa hali ya juu.', date: 'Leo' },
+            { id: 10, title: 'Friji / Refrigerator ya Mlango Mmoja', category: 'Vifaa vya Nyumbani', price: 380000, location: 'Butiama Mjini', condition: 'Mpya', seller: 'Home Appliances Store', phone: '0796906117', image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=800&q=80', description: 'Friji inayotumia umeme mdogo na inapoza kwa kasi kubwa.', date: 'Leo' },
+            { id: 11, title: 'Bidhaa za Rejareja Dukani (Sukari, Mafuta, Unga)', category: 'Bidhaa za Dukani', price: 25000, location: 'Soko Kuu Butiama', condition: 'Mpya', seller: 'General Store Butiama', phone: '0796906117', image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80', description: 'Mahitaji yote ya chakula kwa jumla na rejareja yanapatikana hapa.', date: 'Leo' },
+            { id: 12, title: 'Gari ya Toyota IST (Automatic, AC Safi)', category: 'Magari na Pikipiki', price: 11500000, location: 'Butiama Mjini', condition: 'Imetumika', seller: 'Butiama Motors', phone: '0796906117', image: 'https://images.unsplash.com/photo-1550355191-aa80b1b5e929?auto=format&fit=crop&w=800&q=80', description: 'Gari iko katika hali nzuri sana, haina shida yoyote ya kiufundi.', date: 'Jana' },
+            { id: 13, title: 'Blender ya Heavy Duty (Silver Crest)', category: 'Vifaa vya Jikoni', price: 75000, location: 'Soko Kuu Butiama', condition: 'Mpya', seller: 'Kitchen Expert', phone: '0796906117', image: 'https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=800&q=80', description: 'Blender ya kusaga matunda na viungo vigumu kwa sekunde chache.', date: 'Leo' },
+            { id: 14, title: 'Meza ya Ofisi na Viti 4 vya Kisasa', category: 'Stationeries & Vifaa vya Ofisini', price: 290000, location: 'Kiabakari', condition: 'Mpya', seller: 'Office Depot', phone: '0796906117', image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80', description: 'Seti ya samani za ofisi imara na zenye muonekano wa kuvutia.', date: 'Leo' },
+            { id: 15, title: 'Smart TV ya Inch 43 (Borderless Display)', category: 'Electronics', price: 550000, location: 'Butiama Mjini', condition: 'Mpya', seller: 'Digital World', phone: '0796906117', image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=800&q=80', description: 'Televisheni yenye ubora wa 4K na Apps zote za YouTube na Netflix.', date: 'Leo' }
+        ];
+
+        window.onload = function() {
+            renderHeroSlides();
+            renderCategories();
+            renderProducts();
+            updateUserAccountUI();
+            updateSavedBadge();
+            startNumberCounters();
+            startHeroSlideshow();
+        };
+
+        function renderHeroSlides() {
+            const backgrounds = document.getElementById('heroBackgrounds');
+            const slides = document.getElementById('heroSlides');
+            if (!backgrounds || !slides) return;
+
+            backgrounds.innerHTML = CATEGORIES.map((category, index) => {
+                const imageUrl = HERO_IMAGE_OVERRIDES[category.id] || category.image.replace(/w=\d+&q=\d+/, 'w=1920&q=85');
+                return `<div id="heroBg-${index + 1}" class="hero-slide ${index === 0 ? 'active' : ''} absolute inset-0" style="background-image: url('${imageUrl}')"></div>`;
+            }).join('');
+
+            slides.innerHTML = CATEGORIES.map((category, index) => `
+                <div id="heroSlide-${index + 1}" class="hero-content-slide ${index === 0 ? 'active' : ''} flex flex-col items-center md:items-start gap-4 w-full md:max-w-[58%]">
+                    <div class="flex items-center gap-3 bg-slate-900/80 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/30 shadow-lg shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-bold shadow-md">
+                            <i class="fa-solid ${category.icon} text-lg" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-white tracking-wider block uppercase">${category.id === 'ALL' ? 'Soko Kuu Butiama' : category.name}</span>
+                            <span class="text-[10px] text-brand-100 font-semibold">Nunua na uza Butiama</span>
+                        </div>
+                    </div>
+                    <h1 class="hero-heading w-full font-international text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white text-center md:text-left leading-snug bg-slate-950/45 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3">
+                        ${HERO_HEADLINES[category.id]}
+                    </h1>
+                </div>
+            `).join('');
+        }
+
+        function showAboutPage() {
+            document.getElementById('mainMarketView').classList.add('hidden');
+            document.getElementById('productDetailPage').classList.add('hidden');
+            document.getElementById('aboutPageView').classList.remove('hidden');
+            document.getElementById('mainFooter').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showMainPage() {
+            document.getElementById('aboutPageView').classList.add('hidden');
+            document.getElementById('productDetailPage').classList.add('hidden');
+            document.getElementById('mainMarketView').classList.remove('hidden');
+            document.getElementById('mainFooter').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openProductDetailPage(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+
+            const container = document.getElementById('productDetailContainer');
+            const cleanPhone = p.phone.replace(/\s+/g, '');
+            productImageZoom = 1;
+            const formattedPrice = Number(p.price).toLocaleString();
+            
+            // Ujumbe wa WhatsApp (Bila emoji)
+            const whatsappMsg = encodeURIComponent(`Habari ${p.seller}, nimeona tangazo lako kwenye Soko Kuu la Butiama Market kuhusu bidhaa hii:\n\n• ${p.title}\n• Bei: TSh ${formattedPrice}\n• Eneo: ${p.location}\n\nJe, bado ipo? Ningependa kufanya biashara nawe. Asante!`);
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div id="productImageViewport" class="bg-slate-950 rounded-2xl overflow-hidden flex items-center justify-center min-h-[300px] md:min-h-[450px] relative">
+                        <img id="productDetailImage" src="${p.image}" alt="${p.title}" class="w-full h-full object-contain max-h-[500px] transition-transform duration-200">
+                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-900/80 backdrop-blur-sm p-1.5 rounded-xl">
+                            <button type="button" onclick="adjustProductImageZoom(-0.25)" aria-label="Zoom out" title="Zoom out" class="w-8 h-8 rounded-lg text-white hover:bg-white/20 flex items-center justify-center"><i class="fa-solid fa-minus"></i></button>
+                            <button type="button" onclick="resetProductImageZoom()" aria-label="Reset zoom" title="Reset zoom" class="w-8 h-8 rounded-lg text-white hover:bg-white/20 flex items-center justify-center"><i class="fa-solid fa-compress"></i></button>
+                            <button type="button" onclick="adjustProductImageZoom(0.25)" aria-label="Zoom in" title="Zoom in" class="w-8 h-8 rounded-lg text-white hover:bg-white/20 flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <span class="bg-brand-100 text-brand-800 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">${p.category}</span>
+                            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">${p.title}</h1>
+                            <div class="text-2xl font-extrabold text-brand-600">TSh ${formattedPrice}</div>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-xs text-slate-700 bg-white p-4 rounded-2xl border border-slate-200">
+                            <i class="fa-solid fa-location-dot text-brand-600 text-base"></i>
+                            <div>
+                                <strong class="block text-slate-900">Eneo / Location:</strong>
+                                <span>${p.location}, Butiama</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Maelezo Kamili:</h4>
+                            <p class="text-sm text-slate-700 leading-relaxed">${p.description}</p>
+                        </div>
+
+                        ${p.externalUrl ? `
+                            <a href="${p.externalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:text-brand-800 underline underline-offset-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Tembelea kiungo cha bidhaa
+                            </a>
+                        ` : ''}
+
+                        <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-brand-500 font-bold flex items-center justify-center">${p.seller.charAt(0)}</div>
+                                <div>
+                                    <span class="text-xs font-bold block">${p.seller}</span>
+                                    <span class="text-[10px] text-brand-400">Mchuuzi Aliyethibitishwa</span>
+                                </div>
+                            </div>
+                            <span class="font-mono text-xs font-bold text-amber-300">${p.phone}</span>
+                        </div>
+
+                        <div role="note" class="bg-amber-50 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-3 flex items-start gap-2.5 text-amber-950">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5" aria-hidden="true"></i>
+                            <p class="text-xs leading-relaxed"><strong>Tahadhari:</strong> Usilipe kabla hujakutana na muuzaji na kukagua bidhaa, au kabla mzigo haujafika na kuukagua. Usitume fedha mapema kwa mtu ambaye hujamthibitisha.</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <a href="tel:${cleanPhone}" class="bg-slate-200 hover:bg-slate-300 text-slate-900 text-center py-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-phone text-brand-600"></i> Piga Simu
+                            </a>
+                            <a href="https://wa.me/255${cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone}?text=${whatsappMsg}" target="_blank" class="bg-brand-600 hover:bg-brand-700 text-white text-center py-3 rounded-xl text-xs font-bold transition-colors shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-amber-300 text-base"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mainMarketView').classList.add('hidden');
+            document.getElementById('aboutPageView').classList.add('hidden');
+            document.getElementById('productDetailPage').classList.remove('hidden');
+            document.getElementById('mainFooter').style.display = 'none';
+            updateProductImageZoom();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function adjustProductImageZoom(amount) {
+            productImageZoom = Math.min(3, Math.max(1, productImageZoom + amount));
+            updateProductImageZoom();
+        }
+
+        function resetProductImageZoom() {
+            productImageZoom = 1;
+            updateProductImageZoom();
+        }
+
+        function updateProductImageZoom() {
+            const image = document.getElementById('productDetailImage');
+            if (image) image.style.transform = `scale(${productImageZoom})`;
+        }
+
+        function startHeroSlideshow() {
+            const slideCount = CATEGORIES.length;
+            if (slideCount < 2) return;
+
+            setInterval(() => {
+                document.getElementById(`heroSlide-${currentSlide}`).classList.remove('active');
+                document.getElementById(`heroBg-${currentSlide}`).classList.remove('active');
+                
+                currentSlide = currentSlide % slideCount + 1;
+                
+                document.getElementById(`heroSlide-${currentSlide}`).classList.add('active');
+                document.getElementById(`heroBg-${currentSlide}`).classList.add('active');
+            }, 4500);
+        }
+
+        function startNumberCounters() {
+            animateCounter('countUsers', 1420, 1500);
+            animateCounter('countAds', products.length + 350, 1500);
+        }
+
+        function animateCounter(elementId, targetNumber, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            let start = 0;
+            const increment = Math.ceil(targetNumber / (duration / 30));
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= targetNumber) {
+                    element.innerText = targetNumber.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.innerText = start.toLocaleString();
+                }
+            }, 30);
+        }
+
+        function renderCategories() {
+            const sidebarList = document.getElementById('categoryList');
+            const mobileList = document.getElementById('mobileCategoryPills');
+            if (!sidebarList) return;
+
+            let sidebarHtml = '';
+            let mobileHtml = '';
+
+            CATEGORIES.forEach(cat => {
+                const isActive = activeCategory === cat.id;
+                const categoryVisual = cat.id === 'Stationeries & Vifaa vya Ofisini'
+                    ? `<img src="${cat.image}" alt="" class="w-full h-full rounded-md object-cover">`
+                    : `<i class="fa-solid ${cat.icon} text-xs"></i>`;
+                const activeClass = isActive 
+                    ? 'bg-brand-50 text-brand-700 font-bold border-brand-200 shadow-xs' 
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium border-transparent';
+
+                sidebarHtml += `
+                    <button onclick="filterByCategory('${cat.id}')" class="w-full flex items-center justify-between p-2 rounded-xl text-xs border transition-all ${activeClass}">
+                        <span class="flex items-center gap-2.5 truncate">
+                            <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 shrink-0 flex items-center justify-center border border-brand-200" aria-hidden="true">
+                                ${categoryVisual}
+                            </span>
+                            <span class="truncate">${cat.name}</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                    </button>
+                `;
+
+                mobileHtml += `
+                    <button onclick="filterByCategory('${cat.id}')" class="shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${isActive ? 'bg-brand-600 text-white border-brand-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}">
+                        <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 shrink-0 flex items-center justify-center" aria-hidden="true">
+                            ${categoryVisual}
+                        </span> ${cat.name}
+                    </button>
+                `;
+            });
+
+            sidebarList.innerHTML = sidebarHtml;
+            if (mobileList) mobileList.innerHTML = mobileHtml;
+        }
+
+        function filterByCategory(catId) {
+            activeCategory = catId;
+            renderCategories();
+            renderProducts();
+            const catObj = CATEGORIES.find(c => c.id === catId);
+            if (catObj) {
+                document.getElementById('currentCategoryTitle').innerText = catObj.name;
+            }
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            const resultsCount = document.getElementById('resultsCount');
+            if (!grid) return;
+
+            const searchInput = document.getElementById('searchInput');
+            const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            const sortSelect = document.getElementById('sortSelect');
+            const sortBy = sortSelect ? sortSelect.value : 'newest';
+            const conditionRadio = document.querySelector('input[name="conditionFilter"]:checked');
+            const conditionFilter = conditionRadio ? conditionRadio.value : 'ALL';
+
+            let filtered = products.filter(p => {
+                const matchesCat = activeCategory === 'ALL' || p.category === activeCategory;
+                const matchesCond = conditionFilter === 'ALL' || p.condition === conditionFilter;
+                const matchesSearch = !searchQuery || 
+                    p.title.toLowerCase().includes(searchQuery) ||
+                    p.location.toLowerCase().includes(searchQuery) ||
+                    p.description.toLowerCase().includes(searchQuery) ||
+                    p.category.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesCond && matchesSearch;
+            });
+
+            if (sortBy === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else {
+                filtered.sort((a, b) => b.id - a.id);
+            }
+
+            resultsCount.innerText = `Inaonyesha matangazo ${filtered.length}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            let html = '';
+
+            filtered.forEach(p => {
+                const isSaved = savedItems.includes(p.id);
+                const formattedPrice = Number(p.price).toLocaleString();
+                const cleanPhone = p.phone.replace(/\s+/g, '');
+                const whatsappMsg = encodeURIComponent(`Habari ${p.seller}, nimeona tangazo lako kwenye Soko Kuu la Butiama Market kuhusu bidhaa hii:\n\n• ${p.title}\n• Bei: TSh ${formattedPrice}\n• Eneo: ${p.location}\n\nJe, bado ipo? Ningependa kufanya biashara nawe. Asante!`);
+
+                html += `
+                    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl transition-all flex flex-col overflow-hidden group">
+                        <div class="relative bg-slate-900 h-40 sm:h-44 overflow-hidden cursor-pointer" onclick="openProductDetailPage(${p.id})">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                            
+                            <div class="absolute top-3 right-3">
+                                <button onclick="event.stopPropagation(); toggleSaveItem(${p.id})" class="w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-md flex items-center justify-center text-slate-700 hover:text-red-500 transition-colors">
+                                    <i class="${isSaved ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-sm"></i>
+                                </button>
+                            </div>
+
+                            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-semibold">
+                                <span class="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md flex items-center gap-1.5 truncate">
+                                    <i class="fa-solid fa-location-dot text-brand-400"></i> <span class="truncate">${p.location}</span>
+                                </span>
+                                <span class="bg-brand-500/90 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold">
+                                    ${p.condition}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div class="space-y-1.5 cursor-pointer" onclick="openProductDetailPage(${p.id})">
+                                <h3 class="font-bold text-xs sm:text-sm text-slate-900 element group-hover:text-brand-600 transition-colors leading-snug">
+                                    ${p.title}
+                                </h3>
+                                <div class="text-brand-700 font-extrabold text-sm sm:text-base">
+                                    TSh ${formattedPrice}
+                                </div>
+                            </div>
+
+                            <div class="product-contact-actions pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
+                                <a href="tel:${cleanPhone}" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-center py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-colors flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-phone text-brand-600 text-[10px]"></i> Piga Simu
+                                </a>
+                                <a href="https://wa.me/255${cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone}?text=${whatsappMsg}" target="_blank" class="bg-brand-600 hover:bg-brand-700 text-white text-center py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-colors shadow-xs flex items-center justify-center gap-1">
+                                    <i class="fa-brands fa-whatsapp text-amber-300 text-sm"></i> WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function resetFilters() {
+            activeCategory = 'ALL';
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+            const radioAll = document.querySelector('input[name="conditionFilter"][value="ALL"]');
+            if (radioAll) radioAll.checked = true;
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) sortSelect.value = 'newest';
+            
+            document.getElementById('currentCategoryTitle').innerText = 'Vyote (Matangazo Yote)';
+            renderCategories();
+            renderProducts();
+        }
+
+        function toggleSaveItem(id) {
+            const index = savedItems.indexOf(id);
+            if (index > -1) {
+                savedItems.splice(index, 1);
+            } else {
+                savedItems.push(id);
+            }
+            updateSavedBadge();
+            renderProducts();
+        }
+
+        function updateSavedBadge() {
+            const badge = document.getElementById('savedCountBadge');
+            if (!badge) return;
+            if (savedItems.length > 0) {
+                badge.innerText = savedItems.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function toggleSavedModal() {
+            const modal = document.getElementById('savedModal');
+            const container = document.getElementById('savedItemsContainer');
+            if (!modal || !container) return;
+
+            if (modal.classList.contains('hidden')) {
+                const items = products.filter(p => savedItems.includes(p.id));
+                if (items.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-500 text-center py-10">Hakuna tangazo ulilohifadhi kwa sasa.</p>`;
+                } else {
+                    let html = '';
+                    items.forEach(p => {
+                        const cleanPhone = p.phone.replace(/\s+/g, '');
+                        html += `
+                            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200 gap-3">
+                                <img src="${p.image}" class="w-14 h-14 object-cover rounded-xl shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <span class="text-[9px] font-bold text-brand-600 uppercase tracking-wide block">${p.category}</span>
+                                    <h4 class="text-xs font-bold text-slate-900 truncate">${p.title}</h4>
+                                    <span class="text-xs font-extrabold text-slate-800">TSh ${Number(p.price).toLocaleString()}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <a href="https://wa.me/255${cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone}" target="_blank" class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center text-xs shadow-xs">
+                                        <i class="fa-brands fa-whatsapp text-amber-300"></i>
+                                    </a>
+                                    <button onclick="toggleSaveItem(${p.id}); toggleSavedModal(); toggleSavedModal();" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center text-xs">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function updateUserAccountUI() {
+            const section = document.getElementById('userAccountSection');
+            if (!section) return;
+
+            if (currentUser) {
+                section.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                        <div class="w-7 h-7 rounded-lg bg-brand-600 text-white font-bold flex items-center justify-center text-xs">
+                            ${currentUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="hidden lg:block text-left">
+                            <span class="text-xs font-bold text-slate-800 block leading-tight truncate max-w-[100px]">${currentUser.name}</span>
+                            <span class="text-[9px] text-slate-500 block truncate">${currentUser.location}</span>
+                        </div>
+                        <button onclick="logoutUser()" title="Toka (Logout)" class="text-slate-400 hover:text-red-500 ml-1">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                section.innerHTML = `
+                    <button onclick="openLoginModal()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-colors">
+                        <i class="fa-regular fa-user text-brand-600"></i>
+                        <span class="hidden sm:inline">Ingia</span>
+                    </button>
+                `;
+            }
+        }
+
+        function handlePostAdClick() {
+            if (!currentUser) {
+                openLoginModal();
+            } else {
+                openPostAdModal();
+            }
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
+
+        function handleUserRegistration(event) {
+            event.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const location = document.getElementById('regLocation').value.trim();
+            currentUser = { name, phone, location };
+            closeLoginModal();
+            updateUserAccountUI();
+            openPostAdModal();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            updateUserAccountUI();
+        }
+
+        function openPostAdModal() { 
+            // Reset picha ya awali wakati wa kufungua modal mpya ya kuweka tangazo
+            uploadedImageBase64 = null;
+            const container = document.getElementById('imagePreviewContainer');
+            if(container) container.classList.add('hidden');
+            const imageInput = document.getElementById('adImageInput');
+            if (imageInput) imageInput.value = '';
+            document.getElementById('postAdModal').classList.remove('hidden'); 
+        }
+        function closePostAdModal() { document.getElementById('postAdModal').classList.add('hidden'); }
+
+        function previewSelectedImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    const preview = document.getElementById('imagePreview');
+                    const container = document.getElementById('imagePreviewContainer');
+                    if (preview && container) {
+                        preview.src = uploadedImageBase64;
+                        container.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePostAd(event) {
+            event.preventDefault();
+            const title = document.getElementById('adTitle').value.trim();
+            const category = document.getElementById('adCategory').value;
+            const condition = document.getElementById('adCondition').value;
+            const price = Number(document.getElementById('adPrice').value);
+            const location = document.getElementById('adLocationInput').value.trim();
+            const phone = document.getElementById('adPhone').value.trim();
+            const description = document.getElementById('adDescription').value.trim();
+            const externalUrlValue = document.getElementById('adExternalUrl').value.trim();
+            let externalUrl = '';
+            if (externalUrlValue) {
+                try {
+                    const parsedUrl = new URL(externalUrlValue);
+                    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+                        throw new Error('Unsupported URL protocol');
+                    }
+                    externalUrl = parsedUrl.href;
+                } catch (error) {
+                    alert('Tafadhali weka kiungo halali kinachoanza na http:// au https://.');
+                    return;
+                }
+            }
+
+            let finalImage = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80';
+            if (uploadedImageBase64) {
+                finalImage = uploadedImageBase64;
+            }
+
+            const newAd = {
+                id: Date.now(),
+                title,
+                category,
+                condition,
+                price,
+                location,
+                phone,
+                seller: currentUser ? currentUser.name : 'Mwanachama',
+                image: finalImage,
+                externalUrl,
+                description,
+                date: 'Leo, Ndani ya Dakika Chache'
+            };
+
+            products.unshift(newAd);
+            closePostAdModal();
+            document.getElementById('postAdForm').reset();
+            uploadedImageBase64 = null;
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+
+            const countAdsEl = document.getElementById('countAds');
+            if (countAdsEl) {
+                let current = parseInt(countAdsEl.innerText.replace(/,/g, '')) || 350;
+                countAdsEl.innerText = (current + 1).toLocaleString();
+            }
+
+            renderProducts();
+            alert('Hongera sana! Tangazo lako limechapishwa kwa mafanikio Soko Kuu Butiama.');
+        }
+    </script>
+</body>
+</html>
